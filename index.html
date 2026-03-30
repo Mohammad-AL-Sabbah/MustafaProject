@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>القلم الموجّه – نحو جيل يحترف الكتابة</title>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --gold:#C9A84C; --gold-l:#E8C96A; --gold-d:#8B6914;
+  --deep:#0D1B2A; --navy:#112236;
+  --cream:#F5EDD6; --text-m:#D4C89A;
+  --accent:#4A90B8;
+  --white:#fff;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'Cairo',sans-serif;background:var(--deep);color:var(--cream);overflow-x:hidden;}
+
+.particles{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden;}
+.particle{position:absolute;width:2px;height:2px;background:var(--gold);border-radius:50%;opacity:0;animation:pFloat linear infinite;}
+@keyframes pFloat{0%{transform:translateY(100vh);opacity:0}10%{opacity:.5}90%{opacity:.3}100%{transform:translateY(-80px);opacity:0}}
+
+.page{display:none;min-height:100vh;position:relative;z-index:1;animation:fadeIn .6s ease forwards;}
+.page.active{display:flex;flex-direction:column;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+
+/* NAVBAR */
+.navbar{position:fixed;top:0;left:0;right:0;z-index:200;height:60px;background:rgba(13,27,42,.95);backdrop-filter:blur(14px);border-bottom:1px solid rgba(201,168,76,.2);padding:0 16px;display:none;align-items:center;justify-content:space-between;box-shadow:0 4px 24px rgba(0,0,0,.4);}
+.navbar.visible{display:flex;}
+.nav-brand{font-family:'Amiri',serif;font-size:1.15rem;color:var(--gold-l);white-space:nowrap;cursor:pointer;flex-shrink:0;}
+.nav-links{display:flex;gap:2px;list-style:none;flex-wrap:wrap;justify-content:center;}
+.nav-links button{background:none;border:1px solid transparent;color:var(--text-m);font-family:'Cairo',sans-serif;font-size:.75rem;padding:5px 9px;border-radius:20px;cursor:pointer;transition:all .2s;}
+.nav-links button:hover,.nav-links button.active{color:var(--gold-l);border-color:rgba(201,168,76,.4);background:rgba(201,168,76,.09);}
+.progress-bar{position:fixed;top:60px;left:0;height:3px;background:linear-gradient(90deg,var(--gold-d),var(--gold-l));z-index:201;transition:width .4s ease;box-shadow:0 0 8px var(--gold);}
+
+/* COVER */
+#page-cover{align-items:center;justify-content:center;text-align:center;
+  background:radial-gradient(ellipse at 20% 20%,rgba(201,168,76,.15) 0%,transparent 50%),
+             radial-gradient(ellipse at 80% 80%,rgba(74,144,184,.12) 0%,transparent 50%),
+             linear-gradient(160deg,#0D1B2A 0%,#112236 50%,#0D1B2A 100%);
+  padding:50px 20px;overflow:hidden;}
+#page-cover::before,#page-cover::after{content:'';position:absolute;left:0;right:0;height:5px;background:linear-gradient(90deg,transparent,var(--gold),var(--gold-l),var(--gold),transparent);}
+#page-cover::before{top:0;}#page-cover::after{bottom:0;}
+.corner{position:absolute;width:110px;height:110px;opacity:.45;}
+.corner-tl{top:18px;left:18px;}.corner-tr{top:18px;right:18px;transform:scaleX(-1);}
+.corner-bl{bottom:18px;left:18px;transform:scaleY(-1);}.corner-br{bottom:18px;right:18px;transform:scale(-1);}
+.geo-bg{position:absolute;inset:0;opacity:.03;pointer-events:none;}
+.basmala{font-family:'Amiri',serif;font-size:clamp(1.3rem,4vw,2.1rem);color:var(--gold-l);margin-bottom:34px;animation:glow 3s ease-in-out infinite;}
+@keyframes glow{0%,100%{text-shadow:0 0 20px rgba(201,168,76,.4)}50%{text-shadow:0 0 40px rgba(201,168,76,.8),0 0 60px rgba(201,168,76,.3)}}
+.divider{display:flex;align-items:center;justify-content:center;gap:12px;margin:16px auto;max-width:460px;}
+.divider-line{flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);}
+.divider-diamond{width:9px;height:9px;background:var(--gold);transform:rotate(45deg);box-shadow:0 0 8px var(--gold);}
+.pen-icon{font-size:4.5rem;display:block;margin:8px 0;animation:floatPen 3s ease-in-out infinite;filter:drop-shadow(0 8px 24px rgba(201,168,76,.5));}
+@keyframes floatPen{0%,100%{transform:translateY(0) rotate(-5deg)}50%{transform:translateY(-14px) rotate(5deg)}}
+.cover-title{font-family:'Amiri',serif;font-size:clamp(2.4rem,8vw,4.8rem);font-weight:700;color:#fff;line-height:1.2;text-shadow:0 4px 28px rgba(0,0,0,.5);}
+.cover-title span{color:var(--gold-l);}
+.cover-sub{font-size:clamp(.95rem,3vw,1.4rem);color:var(--text-m);font-weight:300;margin:10px 0 26px;letter-spacing:1px;}
+.team-box{background:rgba(255,255,255,.04);border:1px solid rgba(201,168,76,.25);border-radius:14px;padding:22px 36px;margin:18px auto;max-width:480px;backdrop-filter:blur(10px);}
+.team-label{font-size:.82rem;color:var(--gold);letter-spacing:3px;text-transform:uppercase;margin-bottom:10px;}
+.team-names{display:flex;flex-wrap:wrap;justify-content:center;gap:6px 18px;}
+.team-name{font-size:1rem;font-weight:600;color:var(--cream);}
+.doctor-box{margin:10px 0 26px;font-size:.9rem;color:var(--text-m);}
+.doctor-box strong{color:var(--gold-l);font-size:1.05rem;}
+.enter-btn{display:inline-block;background:linear-gradient(135deg,var(--gold-d),var(--gold),var(--gold-l));color:var(--deep);font-family:'Cairo',sans-serif;font-size:1.1rem;font-weight:700;padding:16px 46px;border-radius:50px;border:none;cursor:pointer;letter-spacing:1px;box-shadow:0 8px 36px rgba(201,168,76,.4);transition:all .3s;position:relative;overflow:hidden;}
+.enter-btn::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,transparent 30%,rgba(255,255,255,.3) 50%,transparent 70%);transform:translateX(-100%);transition:.5s;}
+.enter-btn:hover::before{transform:translateX(100%);}
+.enter-btn:hover{transform:translateY(-3px);box-shadow:0 14px 46px rgba(201,168,76,.6);}
+
+/* BMC CANVAS */
+#page-bmc{padding-top:60px;}
+.bmc-wrapper{padding:24px 16px 50px;max-width:1280px;margin:0 auto;width:100%;position:relative;z-index:1;}
+.bmc-title{text-align:center;margin-bottom:18px;}
+.bmc-title h2{font-family:'Amiri',serif;font-size:clamp(1.4rem,4vw,2.2rem);color:#fff;}
+.bmc-title p{font-size:.82rem;color:var(--gold);letter-spacing:3px;margin-top:4px;}
+
+.bmc-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr 1.2fr 1fr 1fr;
+  grid-template-rows:auto auto auto;
+  gap:9px;
+}
+
+.bmc-cell{
+  background:rgba(255,255,255,.04);
+  border:1px solid rgba(201,168,76,.18);
+  border-radius:13px;
+  padding:14px;
+  position:relative;
+  overflow:hidden;
+  cursor:pointer;
+  transition:transform .25s,box-shadow .25s,border-color .25s;
+}
+.bmc-cell::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--gold-d),var(--gold-l));}
+.bmc-cell:hover{transform:translateY(-4px);box-shadow:0 14px 36px rgba(0,0,0,.3),0 0 20px rgba(201,168,76,.13);border-color:rgba(201,168,76,.48);}
+.cell-code{font-size:.68rem;font-weight:700;color:var(--gold);letter-spacing:2px;margin-bottom:1px;}
+.cell-title-ar{font-family:'Amiri',serif;font-size:.95rem;font-weight:700;color:#fff;line-height:1.3;margin-bottom:1px;}
+.cell-title-en{font-size:.64rem;color:rgba(201,168,76,.55);letter-spacing:1px;margin-bottom:8px;}
+.bmc-cell ul{list-style:none;padding:0;}
+.bmc-cell ul li{font-size:.77rem;color:var(--cream);line-height:1.6;padding:1px 12px 1px 0;position:relative;}
+.bmc-cell ul li::before{content:'◆';position:absolute;right:0;color:var(--gold);font-size:.42rem;top:5px;}
+.click-hint{position:absolute;bottom:7px;left:50%;transform:translateX(-50%);font-size:.6rem;color:rgba(201,168,76,.4);letter-spacing:1px;white-space:nowrap;transition:color .2s;}
+.bmc-cell:hover .click-hint{color:rgba(201,168,76,.75);}
+
+.cell-kp{grid-column:1;grid-row:1/3;}
+.cell-ka{grid-column:2;grid-row:1;}
+.cell-vp{grid-column:3;grid-row:1/3;}
+.cell-cr{grid-column:4;grid-row:1;}
+.cell-cs{grid-column:5;grid-row:1/3;}
+.cell-kr{grid-column:2;grid-row:2;}
+.cell-ch{grid-column:4;grid-row:2;}
+.cell-cost{grid-column:1/4;grid-row:3;}
+.cell-rev{grid-column:4/6;grid-row:3;}
+
+.cell-cost,.cell-rev{padding:14px 16px;}
+.cost-items,.rev-items{display:flex;flex-wrap:wrap;gap:7px;margin-top:7px;}
+.cost-tag{background:rgba(201,168,76,.09);border:1px solid rgba(201,168,76,.22);border-radius:8px;padding:5px 10px;font-size:.72rem;color:var(--cream);line-height:1.5;}
+.cost-tag strong{color:var(--gold-l);display:block;font-size:.67rem;}
+.rev-tag{background:rgba(74,144,184,.09);border:1px solid rgba(74,144,184,.28);border-radius:8px;padding:5px 10px;font-size:.72rem;color:var(--cream);line-height:1.5;}
+.rev-tag strong{color:#A8D4F0;display:block;font-size:.67rem;}
+
+/* DETAIL PAGES */
+.content-page{padding-top:72px;flex:1;display:flex;flex-direction:column;min-height:100vh;}
+.bg-dec{position:absolute;border-radius:50%;filter:blur(80px);pointer-events:none;z-index:0;}
+.bg1{width:380px;height:380px;background:rgba(201,168,76,.06);top:-80px;right:-80px;}
+.bg2{width:280px;height:280px;background:rgba(74,144,184,.06);bottom:80px;left:-60px;}
+.page-hero{text-align:center;padding:48px 20px 28px;position:relative;}
+.slide-num{display:inline-block;min-width:54px;height:54px;padding:0 12px;border-radius:27px;background:linear-gradient(135deg,var(--gold-d),var(--gold));color:var(--deep);font-size:1.2rem;font-weight:900;line-height:54px;text-align:center;margin-bottom:14px;box-shadow:0 4px 18px rgba(201,168,76,.4);}
+.slide-title-ar{font-family:'Amiri',serif;font-size:clamp(1.9rem,5vw,3rem);color:#fff;font-weight:700;}
+.slide-title-en{font-size:clamp(.82rem,2vw,1rem);color:var(--gold);letter-spacing:4px;text-transform:uppercase;margin-top:4px;}
+
+.cards-section{padding:12px 30px 44px;max-width:1000px;margin:0 auto;width:100%;position:relative;z-index:1;}
+.cards-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:18px;margin-top:14px;}
+.card{background:rgba(255,255,255,.04);border:1px solid rgba(201,168,76,.15);border-radius:16px;padding:22px 18px;position:relative;overflow:hidden;transition:transform .3s,box-shadow .3s,border-color .3s;animation:cardIn .5s ease backwards;}
+.card:nth-child(1){animation-delay:.08s}.card:nth-child(2){animation-delay:.16s}.card:nth-child(3){animation-delay:.24s}.card:nth-child(4){animation-delay:.32s}.card:nth-child(5){animation-delay:.4s}
+@keyframes cardIn{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--gold-d),var(--gold-l));border-radius:16px 16px 0 0;}
+.card:hover{transform:translateY(-5px);box-shadow:0 16px 40px rgba(0,0,0,.3),0 0 22px rgba(201,168,76,.1);border-color:rgba(201,168,76,.4);}
+.card-num{width:33px;height:33px;border-radius:50%;background:rgba(201,168,76,.13);border:1px solid rgba(201,168,76,.3);display:flex;align-items:center;justify-content:center;font-size:.83rem;font-weight:700;color:var(--gold);margin-bottom:11px;}
+.card-text{font-size:.97rem;line-height:1.7;color:var(--cream);}
+.note-box{background:rgba(74,144,184,.1);border:1px solid rgba(74,144,184,.3);border-radius:10px;padding:15px 18px;margin-top:22px;font-size:.88rem;color:#A8D4F0;line-height:1.7;}
+
+.detail-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px;margin-top:14px;}
+.detail-card{background:rgba(255,255,255,.04);border:1px solid rgba(201,168,76,.15);border-radius:14px;padding:18px;animation:cardIn .5s ease backwards;position:relative;overflow:hidden;}
+.detail-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--gold-d),var(--gold-l));}
+.detail-card.rev{border-color:rgba(74,144,184,.22);}
+.detail-card.rev::before{background:linear-gradient(90deg,#1A4D6A,#7EC8E3);}
+.detail-card .dc-label{font-size:.7rem;font-weight:700;letter-spacing:2px;color:var(--gold);margin-bottom:5px;}
+.detail-card.rev .dc-label{color:#7EC8E3;}
+.detail-card .dc-value{font-size:1.5rem;font-weight:700;color:var(--gold-l);margin-bottom:5px;}
+.detail-card.rev .dc-value{color:#A8D4F0;}
+.detail-card .dc-desc{font-size:.83rem;color:var(--cream);line-height:1.6;}
+
+.page-nav{display:flex;justify-content:space-between;align-items:center;padding:22px 30px 40px;max-width:1000px;margin:0 auto;width:100%;margin-top:auto;position:relative;z-index:1;}
+.nav-btn{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.05);border:1px solid rgba(201,168,76,.2);color:var(--gold-l);font-family:'Cairo',sans-serif;font-size:.88rem;font-weight:600;padding:10px 24px;border-radius:50px;cursor:pointer;transition:all .25s;}
+.nav-btn:hover{background:rgba(201,168,76,.12);border-color:var(--gold);transform:translateY(-2px);box-shadow:0 6px 20px rgba(201,168,76,.2);}
+.nav-btn.home-btn{background:rgba(201,168,76,.1);border-color:rgba(201,168,76,.4);}
+.page-indicator{font-size:.8rem;color:var(--text-m);letter-spacing:1px;text-align:center;}
+.page-indicator span{color:var(--gold);}
+
+.site-footer{text-align:center;padding:14px;font-size:.76rem;color:rgba(201,168,76,.36);border-top:1px solid rgba(201,168,76,.1);letter-spacing:1px;position:relative;z-index:1;}
+
+::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-track{background:var(--deep);}::-webkit-scrollbar-thumb{background:var(--gold-d);border-radius:3px;}
+
+@media(max-width:900px){
+  .bmc-grid{grid-template-columns:1fr 1fr;grid-template-rows:unset;}
+  .cell-kp,.cell-ka,.cell-vp,.cell-cr,.cell-cs,.cell-kr,.cell-ch{grid-column:unset!important;grid-row:unset!important;}
+  .cell-cost,.cell-rev{grid-column:unset!important;grid-row:unset!important;}
+  .nav-links button{font-size:.68rem;padding:4px 7px;}
+}
+@media(max-width:500px){
+  .cards-section{padding:10px 12px 36px;}
+  .page-nav{padding:14px 12px 30px;}
+  .corner{width:64px;height:64px;}
+}
+</style>
+</head>
+<body>
+
+<div class="particles" id="particles"></div>
+<div class="progress-bar" id="progressBar" style="width:0"></div>
+
+<!-- NAVBAR -->
+<nav class="navbar" id="navbar">
+  <div class="nav-brand" onclick="goTo('bmc')">✒ القلم الموجّه</div>
+  <ul class="nav-links" id="navLinks">
+    <li><button onclick="goTo('bmc')"  data-page="bmc">Canvas</button></li>
+    <li><button onclick="goTo('cs')"   data-page="cs">شرائح العملاء</button></li>
+    <li><button onclick="goTo('vp')"   data-page="vp">القيمة المقترحة</button></li>
+    <li><button onclick="goTo('ch')"   data-page="ch">القنوات</button></li>
+    <li><button onclick="goTo('cr')"   data-page="cr">علاقة العملاء</button></li>
+    <li><button onclick="goTo('rev')"  data-page="rev">مصادر الإيرادات</button></li>
+    <li><button onclick="goTo('ka')"   data-page="ka">الأنشطة الرئيسية</button></li>
+    <li><button onclick="goTo('kr')"   data-page="kr">الموارد الأساسية</button></li>
+    <li><button onclick="goTo('kp')"   data-page="kp">الشراكات</button></li>
+    <li><button onclick="goTo('cost')" data-page="cost">هيكل التكاليف</button></li>
+  </ul>
+</nav>
+
+<!-- ══ COVER ══ -->
+<div class="page active" id="page-cover">
+  <svg class="corner corner-tl" viewBox="0 0 110 110" fill="none"><path d="M8,8 L102,8 L102,18 L18,18 L18,102 L8,102Z" stroke="#C9A84C" stroke-width="1.4" fill="none"/><circle cx="8" cy="8" r="4" fill="#C9A84C"/><path d="M35,55 Q55,35 75,55 Q55,75 35,55Z" stroke="#C9A84C" stroke-width=".7" fill="none" opacity=".35"/></svg>
+  <svg class="corner corner-tr" viewBox="0 0 110 110" fill="none"><path d="M8,8 L102,8 L102,18 L18,18 L18,102 L8,102Z" stroke="#C9A84C" stroke-width="1.4" fill="none"/><circle cx="8" cy="8" r="4" fill="#C9A84C"/><path d="M35,55 Q55,35 75,55 Q55,75 35,55Z" stroke="#C9A84C" stroke-width=".7" fill="none" opacity=".35"/></svg>
+  <svg class="corner corner-bl" viewBox="0 0 110 110" fill="none"><path d="M8,8 L102,8 L102,18 L18,18 L18,102 L8,102Z" stroke="#C9A84C" stroke-width="1.4" fill="none"/><circle cx="8" cy="8" r="4" fill="#C9A84C"/><path d="M35,55 Q55,35 75,55 Q55,75 35,55Z" stroke="#C9A84C" stroke-width=".7" fill="none" opacity=".35"/></svg>
+  <svg class="corner corner-br" viewBox="0 0 110 110" fill="none"><path d="M8,8 L102,8 L102,18 L18,18 L18,102 L8,102Z" stroke="#C9A84C" stroke-width="1.4" fill="none"/><circle cx="8" cy="8" r="4" fill="#C9A84C"/><path d="M35,55 Q55,35 75,55 Q55,75 35,55Z" stroke="#C9A84C" stroke-width=".7" fill="none" opacity=".35"/></svg>
+  <svg class="geo-bg" viewBox="0 0 800 800"><defs><pattern id="geo" x="0" y="0" width="80" height="80" patternUnits="userSpaceOnUse"><polygon points="40,5 75,22.5 75,57.5 40,75 5,57.5 5,22.5" stroke="#C9A84C" stroke-width="1" fill="none"/><line x1="40" y1="5" x2="40" y2="75" stroke="#C9A84C" stroke-width=".5"/><line x1="5" y1="22.5" x2="75" y2="57.5" stroke="#C9A84C" stroke-width=".5"/><line x1="75" y1="22.5" x2="5" y2="57.5" stroke="#C9A84C" stroke-width=".5"/></pattern></defs><rect width="800" height="800" fill="url(#geo)"/></svg>
+  <div style="position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;max-width:680px;margin:auto;padding:40px 20px;text-align:center;">
+    <div class="basmala">بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ</div>
+    <div class="divider"><div class="divider-line"></div><div class="divider-diamond"></div><div class="divider-line"></div></div>
+    <span class="pen-icon">✒</span>
+    <h1 class="cover-title">القلم <span>الموجّه</span></h1>
+    <p class="cover-sub">نحو جيل يحترف الكتابة</p>
+    <div class="divider"><div class="divider-line"></div><div class="divider-diamond"></div><div class="divider-diamond" style="margin:0 5px"></div><div class="divider-diamond"></div><div class="divider-line"></div></div>
+    <div class="team-box">
+      <div class="team-label">⟡ فريق العمل ⟡</div>
+      <div class="team-names">
+        <span class="team-name">مصطفى عوض</span>
+        <span class="team-name">ميار سايح</span>
+        <span class="team-name">دانا عامر</span>
+        <span class="team-name">علاء علاونة</span>
+      </div>
+    </div>
+    <div class="doctor-box">إشراف الدكتور: <strong>وجيه عامر</strong></div>
+    <div class="divider"><div class="divider-line"></div><div class="divider-diamond"></div><div class="divider-line"></div></div>
+    <p style="margin:12px 0 24px;font-size:.8rem;color:rgba(201,168,76,.46);letter-spacing:2px;">مساق الريادة والإبداع · Business Model Canvas</p>
+    <button class="enter-btn" onclick="goTo('bmc')">✨ انقر لترى أروع منتج تعليمي</button>
+  </div>
+</div>
+
+<!-- ══ BMC CANVAS ══ -->
+<div class="page" id="page-bmc">
+  <div class="bg-dec bg1"></div><div class="bg-dec bg2"></div>
+  <div class="bmc-wrapper">
+    <div class="bmc-title">
+      <h2>Business Model Canvas</h2>
+      <p>نموذج العمل التجاري — القلم الموجّه لتعليم كتابة الحروف</p>
+    </div>
+    <div class="divider" style="margin-bottom:18px;"><div class="divider-line"></div><div class="divider-diamond"></div><div class="divider-line"></div></div>
+
+    <div class="bmc-grid">
+      <!-- KP -->
+      <div class="bmc-cell cell-kp" onclick="goTo('kp')">
+        <div class="cell-code">KP</div>
+        <div class="cell-title-ar">الشراكات الأساسية</div>
+        <div class="cell-title-en">Key Partnerships</div>
+        <ul>
+          <li>مطابع وكراسات تعليمية</li>
+          <li>مدارس ورياض أطفال</li>
+          <li>شركات إلكترونيات</li>
+          <li>خبراء تعليم الأطفال</li>
+        </ul>
+        <div class="click-hint">انقر للتفاصيل ↗</div>
+      </div>
+      <!-- KA -->
+      <div class="bmc-cell cell-ka" onclick="goTo('ka')">
+        <div class="cell-code">KA</div>
+        <div class="cell-title-ar">الأنشطة الرئيسية</div>
+        <div class="cell-title-en">Key Activities</div>
+        <ul>
+          <li>تصميم النموذج الأولي</li>
+          <li>اختبار مع الأطفال</li>
+          <li>إنتاج الكراسات</li>
+          <li>التسويق في المدارس</li>
+        </ul>
+        <div class="click-hint">انقر للتفاصيل ↗</div>
+      </div>
+      <!-- VP -->
+      <div class="bmc-cell cell-vp" onclick="goTo('vp')">
+        <div class="cell-code">VP</div>
+        <div class="cell-title-ar">القيمة المقترحة</div>
+        <div class="cell-title-en">Value Proposition</div>
+        <ul>
+          <li>تعلم أسرع وأدق للحروف</li>
+          <li>تصحيح فوري أثناء الكتابة</li>
+          <li>تجربة تفاعلية وممتعة</li>
+          <li>منتج مبتكر غير تقليدي</li>
+        </ul>
+        <div class="click-hint">انقر للتفاصيل ↗</div>
+      </div>
+      <!-- CR -->
+      <div class="bmc-cell cell-cr" onclick="goTo('cr')">
+        <div class="cell-code">CR</div>
+        <div class="cell-title-ar">علاقة العملاء</div>
+        <div class="cell-title-en">Customer Relationships</div>
+        <ul>
+          <li>دعم فني سريع</li>
+          <li>نسخ تجريبية مجانية</li>
+          <li>جمع ملاحظات المستخدمين</li>
+        </ul>
+        <div class="click-hint">انقر للتفاصيل ↗</div>
+      </div>
+      <!-- CS -->
+      <div class="bmc-cell cell-cs" onclick="goTo('cs')">
+        <div class="cell-code">CS</div>
+        <div class="cell-title-ar">شرائح العملاء</div>
+        <div class="cell-title-en">Customer Segments</div>
+        <ul>
+          <li>أطفال 4–7 سنوات</li>
+          <li>أهالٍ باحثون عن تعليم تفاعلي</li>
+          <li>مدارس ورياض أطفال</li>
+        </ul>
+        <div class="click-hint">انقر للتفاصيل ↗</div>
+      </div>
+      <!-- KR -->
+      <div class="bmc-cell cell-kr" onclick="goTo('kr')">
+        <div class="cell-code">KR</div>
+        <div class="cell-title-ar">الموارد الأساسية</div>
+        <div class="cell-title-en">Key Resources</div>
+        <ul>
+          <li>مواد خام وإلكترونيات</li>
+          <li>كراسة الحروف التعليمية</li>
+          <li>معرفة تقنية وبرمجية</li>
+          <li>ميزانية ≤ 500$</li>
+        </ul>
+        <div class="click-hint">انقر للتفاصيل ↗</div>
+      </div>
+      <!-- CH -->
+      <div class="bmc-cell cell-ch" onclick="goTo('ch')">
+        <div class="cell-code">CH</div>
+        <div class="cell-title-ar">القنوات</div>
+        <div class="cell-title-en">Channels</div>
+        <ul>
+          <li>توزيع مباشر ومعارض</li>
+          <li>التعاون مع المدارس</li>
+          <li>وسائل التواصل الاجتماعي</li>
+          <li>معارض طلابية</li>
+        </ul>
+        <div class="click-hint">انقر للتفاصيل ↗</div>
+      </div>
+      <!-- COST -->
+      <div class="bmc-cell cell-cost" onclick="goTo('cost')">
+        <div class="cell-code">C$</div>
+        <div class="cell-title-ar">هيكل التكاليف</div>
+        <div class="cell-title-en">Cost Structure</div>
+        <div class="cost-items">
+          <div class="cost-tag"><strong>تكاليف التطوير (مرة واحدة)</strong>~440$ · نماذج ×5 + تصميم + طباعة تجريبية</div>
+          <div class="cost-tag"><strong>تكلفة الوحدة الواحدة</strong>~24$ · مكونات 18$ + كراسة 4$ + تغليف 2$</div>
+          <div class="cost-tag"><strong>دفعة إنتاج ×20 وحدة</strong>~480$ · تسويق وترويج ~80$</div>
+          <div class="cost-tag"><strong>رأس المال للانطلاق</strong>~1,000$ إجمالاً</div>
+        </div>
+        <div class="click-hint">انقر للتفاصيل ↗</div>
+      </div>
+      <!-- REV -->
+      <div class="bmc-cell cell-rev" onclick="goTo('rev')">
+        <div class="cell-code">R$</div>
+        <div class="cell-title-ar">مصادر الإيرادات</div>
+        <div class="cell-title-en">Revenue Streams</div>
+        <div class="rev-items">
+          <div class="rev-tag"><strong>المرحلة الأولى</strong>بيع باقة (قلم + كراسة) كـ Kit متكامل</div>
+          <div class="rev-tag"><strong>المرحلة الثانية</strong>بيع القلم منفرداً والكراسة منفردة</div>
+          <div class="rev-tag"><strong>إيرادات متكررة</strong>كراسات إضافية – تجديد دوري</div>
+          <div class="rev-tag"><strong>مستقبلاً</strong>اشتراك تطبيق رقمي مصاحب</div>
+        </div>
+        <div class="click-hint">انقر للتفاصيل ↗</div>
+      </div>
+    </div>
+  </div>
+  <div class="site-footer">القلم الموجّه · نحو جيل يحترف الكتابة</div>
+</div>
+
+<!-- ══ CS ══ -->
+<div class="page" id="page-cs">
+  <div class="bg-dec bg1"></div><div class="bg-dec bg2"></div>
+  <div class="content-page">
+    <div class="page-hero">
+      <div class="slide-num">CS</div>
+      <h2 class="slide-title-ar">شرائح العملاء</h2>
+      <div class="slide-title-en">Customer Segments</div>
+      <div class="divider" style="margin-top:14px;"><div class="divider-line"></div><div class="divider-diamond"></div><div class="divider-line"></div></div>
+    </div>
+    <div class="cards-section">
+      <div class="cards-grid">
+        <div class="card"><div class="card-num">1</div><div class="card-text">🧒 الأطفال من عمر 4–7 سنوات<br><small style="color:var(--gold);opacity:.85">(مرحلة التأسيس)</small></div></div>
+        <div class="card"><div class="card-num">2</div><div class="card-text">👨‍👩‍👧 الأهالي الباحثون عن وسائل تعليمية تفاعلية</div></div>
+        <div class="card"><div class="card-num">3</div><div class="card-text">🏫 المدارس الابتدائية ورياض الأطفال المهتمة بتقنيات التعليم المبكر</div></div>
+      </div>
+    </div>
+    <div class="page-nav">
+      <button class="nav-btn home-btn" onclick="goTo('bmc')">← Canvas</button>
+      <span class="page-indicator">شرائح العملاء</span>
+      <button class="nav-btn" onclick="goTo('vp')">القيمة المقترحة ←</button>
+    </div>
+    <div class="site-footer">القلم الموجّه · نحو جيل يحترف الكتابة</div>
+  </div>
+</div>
+
+<!-- ══ VP ══ -->
+<div class="page" id="page-vp">
+  <div class="bg-dec bg1"></div><div class="bg-dec bg2"></div>
+  <div class="content-page">
+    <div class="page-hero">
+      <div class="slide-num">VP</div>
+      <h2 class="slide-title-ar">القيمة المقترحة</h2>
+      <div class="slide-title-en">Value Proposition</div>
+      <div class="divider" style="margin-top:14px;"><div class="divider-line"></div><div class="divider-diamond"></div><div class="divider-line"></div></div>
+    </div>
+    <div class="cards-section">
+      <div class="cards-grid">
+        <div class="card"><div class="card-num">1</div><div class="card-text">📝 تعلّم كتابة الحروف العربية بدقة وسرعة أكبر</div></div>
+        <div class="card"><div class="card-num">2</div><div class="card-text">⚡ تصحيح فوري للأخطاء أثناء الكتابة</div></div>
+        <div class="card"><div class="card-num">3</div><div class="card-text">🎮 تجربة تعليمية ممتعة وتفاعلية تشبه اللعبة</div></div>
+        <div class="card"><div class="card-num">4</div><div class="card-text">💡 منتج مبتكر وغير تقليدي مقارنة بالكراسات العادية</div></div>
+      </div>
+      <div class="note-box">⭐ القيمة الجوهرية: التغذية الراجعة الفورية التي تميّز القلم عن كل أداة تعليمية تقليدية</div>
+    </div>
+    <div class="page-nav">
+      <button class="nav-btn" onclick="goTo('cs')">← شرائح العملاء</button>
+      <span class="page-indicator">القيمة المقترحة</span>
+      <button class="nav-btn" onclick="goTo('ch')">القنوات ←</button>
+    </div>
+    <div class="site-footer">القلم الموجّه · نحو جيل يحترف الكتابة</div>
+  </div>
+</div>
+
+<!-- ══ CH ══ -->
+<div class="page" id="page-ch">
+  <div class="bg-dec bg1"></div><div class="bg-dec bg2"></div>
+  <div class="content-page">
+    <div class="page-hero">
+      <div class="slide-num">CH</div>
+      <h2 class="slide-title-ar">القنوات</h2>
+      <div class="slide-title-en">Channels</div>
+      <div class="divider" style="margin-top:14px;"><div class="divider-line"></div><div class="divider-diamond"></div><div class="divider-line"></div></div>
+    </div>
+    <div class="cards-section">
+      <div class="cards-grid">
+        <div class="card"><div class="card-num">1</div><div class="card-text">🏛️ توزيع مباشر عبر الأهالي داخل الحرم الجامعي أو المعارض التعليمية</div></div>
+        <div class="card"><div class="card-num">2</div><div class="card-text">🤝 التعاون مع المدارس ورياض الأطفال لتجربة المنتج</div></div>
+        <div class="card"><div class="card-num">3</div><div class="card-text">📱 وسائل التواصل الاجتماعي لعرض فيديوهات تعليمية قصيرة</div></div>
+        <div class="card"><div class="card-num">4</div><div class="card-text">🏆 عرض المشروع في المعارض الطلابية والتكنولوجية</div></div>
+      </div>
+    </div>
+    <div class="page-nav">
+      <button class="nav-btn" onclick="goTo('vp')">← القيمة المقترحة</button>
+      <span class="page-indicator">القنوات</span>
+      <button class="nav-btn" onclick="goTo('cr')">علاقة العملاء ←</button>
+    </div>
+    <div class="site-footer">القلم الموجّه · نحو جيل يحترف الكتابة</div>
+  </div>
+</div>
+
+<!-- ══ CR ══ -->
+<div class="page" id="page-cr">
+  <div class="bg-dec bg1"></div><div class="bg-dec bg2"></div>
+  <div class="content-page">
+    <div class="page-hero">
+      <div class="slide-num">CR</div>
+      <h2 class="slide-title-ar">علاقة العملاء</h2>
+      <div class="slide-title-en">Customer Relationships</div>
+      <div class="divider" style="margin-top:14px;"><div class="divider-line"></div><div class="divider-diamond"></div><div class="divider-line"></div></div>
+    </div>
+    <div class="cards-section">
+      <div class="cards-grid">
+        <div class="card"><div class="card-num">1</div><div class="card-text">📞 دعم فني سريع عبر الهاتف أو البريد الإلكتروني</div></div>
+        <div class="card"><div class="card-num">2</div><div class="card-text">🎁 تقديم نسخ تجريبية مجانية للمدارس لجذب الثقة</div></div>
+        <div class="card"><div class="card-num">3</div><div class="card-text">🔄 جمع ملاحظات المستخدمين لتحسين المنتج باستمرار</div></div>
+      </div>
+    </div>
+    <div class="page-nav">
+      <button class="nav-btn" onclick="goTo('ch')">← القنوات</button>
+      <span class="page-indicator">علاقة العملاء</span>
+      <button class="nav-btn" onclick="goTo('rev')">مصادر الإيرادات ←</button>
+    </div>
+    <div class="site-footer">القلم الموجّه · نحو جيل يحترف الكتابة</div>
+  </div>
+</div>
+
+<!-- ══ REV ══ -->
+<div class="page" id="page-rev">
+  <div class="bg-dec bg1"></div><div class="bg-dec bg2"></div>
+  <div class="content-page">
+    <div class="page-hero">
+      <div class="slide-num">R$</div>
+      <h2 class="slide-title-ar">مصادر الإيرادات</h2>
+      <div class="slide-title-en">Revenue Streams</div>
+      <div class="divider" style="margin-top:14px;"><div class="divider-line"></div><div class="divider-diamond"></div><div class="divider-line"></div></div>
+    </div>
+    <div class="cards-section">
+      <div class="detail-grid">
+        <div class="detail-card rev" style="animation-delay:.08s">
+          <div class="dc-label">المرحلة الأولى</div>
+          <div class="dc-value">Kit متكامل</div>
+          <div class="dc-desc">بيع باقة (قلم + كراسة) كـ Kit متكامل — المصدر الرئيسي الأول للإيرادات</div>
+        </div>
+        <div class="detail-card rev" style="animation-delay:.16s">
+          <div class="dc-label">المرحلة الثانية</div>
+          <div class="dc-value">بيع منفرد</div>
+          <div class="dc-desc">بيع القلم منفرداً والكراسة منفردة — لمن يحتاج تجديداً أو استبدالاً</div>
+        </div>
+        <div class="detail-card rev" style="animation-delay:.24s">
+          <div class="dc-label">إيرادات متكررة</div>
+          <div class="dc-value">تجديد دوري</div>
+          <div class="dc-desc">إيرادات متكررة من الكراسات الإضافية وأوراق التدريب الجديدة</div>
+        </div>
+        <div class="detail-card rev" style="animation-delay:.32s">
+          <div class="dc-label">مراحل مستقبلية</div>
+          <div class="dc-value">تطبيق رقمي</div>
+          <div class="dc-desc">اشتراك في تطبيق رقمي مصاحب — Phase 2 &amp; 3</div>
+        </div>
+      </div>
+    </div>
+    <div class="page-nav">
+      <button class="nav-btn" onclick="goTo('cr')">← علاقة العملاء</button>
+      <span class="page-indicator">مصادر الإيرادات</span>
+      <button class="nav-btn" onclick="goTo('ka')">الأنشطة الرئيسية ←</button>
+    </div>
+    <div class="site-footer">القلم الموجّه · نحو جيل يحترف الكتابة</div>
+  </div>
+</div>
+
+<!-- ══ KA ══ -->
+<div class="page" id="page-ka">
+  <div class="bg-dec bg1"></div><div class="bg-dec bg2"></div>
+  <div class="content-page">
+    <div class="page-hero">
+      <div class="slide-num">KA</div>
+      <h2 class="slide-title-ar">الأنشطة الرئيسية</h2>
+      <div class="slide-title-en">Key Activities</div>
+      <div class="divider" style="margin-top:14px;"><div class="divider-line"></div><div class="divider-diamond"></div><div class="divider-line"></div></div>
+    </div>
+    <div class="cards-section">
+      <div class="cards-grid">
+        <div class="card"><div class="card-num">1</div><div class="card-text">🔧 تصميم وتجميع النموذج الأولي للقلم</div></div>
+        <div class="card"><div class="card-num">2</div><div class="card-text">🧪 اختبار المنتج مع الأطفال لضمان فعالية التعلم</div></div>
+        <div class="card"><div class="card-num">3</div><div class="card-text">🖨️ إنتاج الكراسات التعليمية للطباعة أو التصميم الرقمي</div></div>
+        <div class="card"><div class="card-num">4</div><div class="card-text">📣 التسويق في المدارس والمعارض التعليمية</div></div>
+      </div>
+    </div>
+    <div class="page-nav">
+      <button class="nav-btn" onclick="goTo('rev')">← مصادر الإيرادات</button>
+      <span class="page-indicator">الأنشطة الرئيسية</span>
+      <button class="nav-btn" onclick="goTo('kr')">الموارد الأساسية ←</button>
+    </div>
+    <div class="site-footer">القلم الموجّه · نحو جيل يحترف الكتابة</div>
+  </div>
+</div>
+
+<!-- ══ KR ══ -->
+<div class="page" id="page-kr">
+  <div class="bg-dec bg1"></div><div class="bg-dec bg2"></div>
+  <div class="content-page">
+    <div class="page-hero">
+      <div class="slide-num">KR</div>
+      <h2 class="slide-title-ar">الموارد الأساسية</h2>
+      <div class="slide-title-en">Key Resources</div>
+      <div class="divider" style="margin-top:14px;"><div class="divider-line"></div><div class="divider-diamond"></div><div class="divider-line"></div></div>
+    </div>
+    <div class="cards-section">
+      <div class="cards-grid">
+        <div class="card"><div class="card-num">1</div><div class="card-text">⚙️ المواد الخام والإلكترونيات لبناء القلم<br><small style="color:var(--text-m)">(لوحة، حساسات، محرك اهتزاز، بطارية)</small></div></div>
+        <div class="card"><div class="card-num">2</div><div class="card-text">📓 كراسة الحروف التعليمية والأوراق المصممة</div></div>
+        <div class="card"><div class="card-num">3</div><div class="card-text">💻 المعرفة التقنية والبرمجية لتجميع القلم</div></div>
+        <div class="card"><div class="card-num">4</div><div class="card-text">💰 ميزانية أولية ≤ 500$ لتصميم وطباعة النموذج الأولي</div></div>
+      </div>
+    </div>
+    <div class="page-nav">
+      <button class="nav-btn" onclick="goTo('ka')">← الأنشطة الرئيسية</button>
+      <span class="page-indicator">الموارد الأساسية</span>
+      <button class="nav-btn" onclick="goTo('kp')">الشراكات ←</button>
+    </div>
+    <div class="site-footer">القلم الموجّه · نحو جيل يحترف الكتابة</div>
+  </div>
+</div>
+
+<!-- ══ KP ══ -->
+<div class="page" id="page-kp">
+  <div class="bg-dec bg1"></div><div class="bg-dec bg2"></div>
+  <div class="content-page">
+    <div class="page-hero">
+      <div class="slide-num">KP</div>
+      <h2 class="slide-title-ar">الشراكات الأساسية</h2>
+      <div class="slide-title-en">Key Partnerships</div>
+      <div class="divider" style="margin-top:14px;"><div class="divider-line"></div><div class="divider-diamond"></div><div class="divider-line"></div></div>
+    </div>
+    <div class="cards-section">
+      <div class="cards-grid">
+        <div class="card"><div class="card-num">1</div><div class="card-text">🖨️ مطابع أو مراكز تصميم الكراسات التعليمية</div></div>
+        <div class="card"><div class="card-num">2</div><div class="card-text">🏫 مدارس ورياض أطفال لتجربة وتسويق المنتج</div></div>
+        <div class="card"><div class="card-num">3</div><div class="card-text">🔌 شركات إلكترونيات صغيرة لتوفير المكونات بأسعار منخفضة</div></div>
+        <div class="card"><div class="card-num">4</div><div class="card-text">👨‍🏫 خبراء تعليم الأطفال لتقديم المشورة حول تصميم الحروف والمسارات</div></div>
+      </div>
+    </div>
+    <div class="page-nav">
+      <button class="nav-btn" onclick="goTo('kr')">← الموارد الأساسية</button>
+      <span class="page-indicator">الشراكات الأساسية</span>
+      <button class="nav-btn" onclick="goTo('cost')">هيكل التكاليف ←</button>
+    </div>
+    <div class="site-footer">القلم الموجّه · نحو جيل يحترف الكتابة</div>
+  </div>
+</div>
+
+<!-- ══ COST ══ -->
+<div class="page" id="page-cost">
+  <div class="bg-dec bg1"></div><div class="bg-dec bg2"></div>
+  <div class="content-page">
+    <div class="page-hero">
+      <div class="slide-num">C$</div>
+      <h2 class="slide-title-ar">هيكل التكاليف</h2>
+      <div class="slide-title-en">Cost Structure</div>
+      <div class="divider" style="margin-top:14px;"><div class="divider-line"></div><div class="divider-diamond"></div><div class="divider-line"></div></div>
+    </div>
+    <div class="cards-section">
+      <div class="detail-grid">
+        <div class="detail-card" style="animation-delay:.08s">
+          <div class="dc-label">تكاليف التطوير (مرة واحدة)</div>
+          <div class="dc-value">~440$</div>
+          <div class="dc-desc">نماذج أولية × 5 + تصميم + طباعة تجريبية</div>
+        </div>
+        <div class="detail-card" style="animation-delay:.16s">
+          <div class="dc-label">تكلفة الوحدة الواحدة</div>
+          <div class="dc-value">~24$</div>
+          <div class="dc-desc">مكونات 18$ + كراسة 4$ + تغليف 2$</div>
+        </div>
+        <div class="detail-card" style="animation-delay:.24s">
+          <div class="dc-label">دفعة إنتاج أولى × 20 وحدة</div>
+          <div class="dc-value">~480$</div>
+          <div class="dc-desc">تكلفة الإنتاج الكلية للدفعة الأولى</div>
+        </div>
+        <div class="detail-card" style="animation-delay:.32s">
+          <div class="dc-label">تسويق وترويج</div>
+          <div class="dc-value">~80$</div>
+          <div class="dc-desc">تكاليف التسويق الأولي والترويج للمنتج</div>
+        </div>
+        <div class="detail-card" style="animation-delay:.4s;border-color:rgba(201,168,76,.5);background:rgba(201,168,76,.07)">
+          <div class="dc-label" style="color:var(--gold-l)">إجمالي رأس المال المطلوب للانطلاق</div>
+          <div class="dc-value" style="font-size:2.1rem">~1,000$</div>
+          <div class="dc-desc">تطوير 440$ + إنتاج 480$ + تسويق 80$</div>
+        </div>
+      </div>
+    </div>
+    <div class="page-nav">
+      <button class="nav-btn" onclick="goTo('kp')">← الشراكات الأساسية</button>
+      <span class="page-indicator">هيكل التكاليف</span>
+      <button class="nav-btn home-btn" onclick="goTo('bmc')">🗂 Canvas</button>
+    </div>
+    <div class="site-footer">القلم الموجّه · نحو جيل يحترف الكتابة</div>
+  </div>
+</div>
+
+<script>
+const pc=document.getElementById('particles');
+for(let i=0;i<22;i++){const p=document.createElement('div');p.className='particle';p.style.cssText=`left:${Math.random()*100}%;animation-duration:${8+Math.random()*14}s;animation-delay:${Math.random()*14}s;width:${1+Math.random()*2.4}px;height:${1+Math.random()*2.4}px;`;pc.appendChild(p);}
+
+const ORDER=['bmc','cs','vp','ch','cr','rev','ka','kr','kp','cost'];
+let cur='cover';
+
+function goTo(id){
+  const prev=document.getElementById('page-'+cur);
+  if(prev)prev.classList.remove('active');
+  cur=id;
+  const next=document.getElementById('page-'+id);
+  if(next){next.classList.add('active');window.scrollTo(0,0);}
+  const nav=document.getElementById('navbar');
+  if(id==='cover'){nav.classList.remove('visible');document.getElementById('progressBar').style.width='0';}
+  else{
+    nav.classList.add('visible');
+    const idx=ORDER.indexOf(id);
+    document.getElementById('progressBar').style.width=(idx>=0?((idx+1)/ORDER.length*100):5)+'%';
+    document.querySelectorAll('#navLinks button').forEach(b=>b.classList.toggle('active',b.dataset.page===id));
+  }
+}
+
+document.addEventListener('keydown',e=>{
+  if(cur==='cover')return;
+  const i=ORDER.indexOf(cur);
+  if(e.key==='ArrowLeft'&&i<ORDER.length-1)goTo(ORDER[i+1]);
+  if(e.key==='ArrowRight'&&i>0)goTo(ORDER[i-1]);
+  if(e.key==='Escape')goTo('cover');
+});
+</script>
+</body>
+</html>
